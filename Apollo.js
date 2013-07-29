@@ -5,19 +5,17 @@ var config = require('./config'); // configuration loader
 
 var protocol = require('./protocol'); // provides methods for handling the Apollo protocol
 
-var Player = require('./Player'); // import the player class
-
-network.createServer(function(conn){
+function connectionHandler(client){
 	console.log("Client connected");
+}
 
-	var player = new Player(conn);
+function dataHandler(client, data){
+	var message = protocol.parsePacket(data); // parse the message
+	console.log(message); // dump the message
+}
 
-	conn.on('data', function(d){
-		var message = protocol.parsePacket(d); // parse the message
-		console.log(message); // dump the message
-	});
+function endHandler(client){
+	console.log("Client disconnected");
+}
 
-	conn.on('end', function(){
-		console.log("Client disconnected");
-	});
-}).listen(config.port, config.host);
+network.server(network.TCP, config.port, connectionHandler, dataHandler, endHandler);

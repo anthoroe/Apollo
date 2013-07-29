@@ -1,57 +1,53 @@
-// network.js -- compatibillity layer for net, allowing support for more interfaces
+var net = require('net');
+var WebSocketServer = require('websocket').server;
+var http = require('http');
 
-var net = require('net'); // original
-var tls = require('tls'); // tls
+function Connection(medium, conn){
+	this.conn = conn;
+	this.medium = medium;
 
-function Network(){
-	this.TCP = 0;
-	this.TLS = 1;
-	
-	this.mode = this.TCP;
-	this.pfx = "";
-	this.key = "";
-	this.cert = "";
-	this.ca = "";
-	
-	this.createServer = function(options, callback){
-		if(arguments.length == 0){
-			if(this.mode == this.TCP){
-				return net.createServer();
-			} else if(this.mode == this.TLS){
-				return tls.createServer(this.generateOptions({}));
-			}
-		} else if(arguments.length == 1){
-			if(this.mode == this.TCP){
-				return net.createServer(options);
-			} else if(this.mode == this.TLS){
-				return tls.createServer(this.generateOptions({}), options);
-			}
-		} else if(arguments.length == 2){
-			if(this.mode == this.TCP){
-				return net.createServer(options, callback);
-			} else if(this.mode == this.TLS){
-				return tls.createServer(this.generateOptions(options), callback);
-			}
-		}
-	}
-	
-	this.generateOptions = function(existingOptions){
-		// generates options for TLS
-		
-		if(this.pfx.length){
-			existingOptions.pfx = this.pfx;
-		}
-		if(this.key.length){
-			existingOptions.key = this.key;
-		}
-		if(this.cert.length){
-			existingOptions.cert = this.cert;
-		}
-		if(this.ca.length){
-			existingOptions.ca = this.ca;
-		}
-		return existingOptions;
-	};
+	// use this rather than the Player class... they work similarly enough
+}
+
+Connection.prototype.send = function(msg){
+	if(this.medium == module.exports.TCP)
+		this.conn.write(msg);
+	if(this.medium == module.exports.WS)
+		this.conn.send(msg);
 };
 
-module.exports = new Network();
+module.exports.TCP = 0;
+module.exports.WS = 1;
+
+function server(medium, port, connectionHandler, dataHandler, endHandler){
+	if(medium == module.exports.TCP){
+		net.createServer(function(conn){
+			var _conn = new Connection(medium, conn);
+			connectionHandler(_conn);
+			conn.on('data', function(d){
+				dataHandler(_conn, d);	
+			});
+			conn.on('end', function(){
+				endHandler(_conn);
+			});
+		}).listen(port);
+	} else if(medium == module.exports.WS){
+		server = http.createServer(function(req, res){  }).listen(port); // no embedded server at the moment
+		wsServer = new WebSocketServer({httpServer: server});
+		wsServer.on('request', function(req){
+			var conn = req.accept(null, req.origin);
+
+			_conn = new Connection(medium, conn);
+			connectionHandler(_conn);
+			conn.on('message', function(message){
+				// force text
+				dataHandler(_conn, message.utf8Data);
+			});
+			conn.on('close', function(){
+				endHandler(_conn);
+			});
+		});		
+	}
+}
+
+module.exports.server = server;
