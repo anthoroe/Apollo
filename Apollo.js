@@ -31,4 +31,4 @@ function endHandler(client){
 	extensionHandler.handleMessage(client, {"type":"disconnect"}, true); // send an explicit true to override the restricted messages
 }
 
-network.server(network.TCP, config.port, connectionHandler, dataHandler, endHandler);
+network.server(network.WS, config.port, connectionHandler, dataHandler, endHandler);

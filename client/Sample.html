@@ -1,0 +1,33 @@
+<script src="ApolloClient.js"></script>
+
+<script>
+
+function join(msg){
+	document.body.innerHTML += '<div id="'+msg.id+'" style="background-color: red;width:100px;height:100px;position:absolute;"></div>';
+}
+
+function leave(msg){
+	document.body.removeChild(document.getElementById(msg.id));
+}
+
+function move(msg){
+	document.getElementById(msg.id).style.left = msg.x;
+	document.getElementById(msg.id).style.top = msg.y;
+}
+
+function chat(msg){
+	document.getElementById(msg.id).innerText = msg.chat;
+}	
+
+addMessageListener("join", join);
+addMessageListener("leave", leave);
+addMessageListener("move", move);
+addMessageListener("chat", chat);
+
+ApolloClient("localhost", 8909);
+</script>
+
+<body>
+	<div id="field" style="background-color: #EEE; width: 500px; height: 500px;" onClick="sendMessage({'type':'move', 'x':event.pageX, 'y':event.pageY}) 
+"></div>
+</body>

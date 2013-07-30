@@ -16,7 +16,7 @@ function connect(client, message){
 	
 	client.id = ids++;
 	
-	broadcast({"type":"connect", "id": client.id});
+	broadcast({"type":"join", "id": client.id});
 }
 
 function disconnect(client, message){
@@ -31,7 +31,7 @@ function disconnect(client, message){
 	// remove user
 	users.splice(i);
 	
-	broadcast({"type":"disconnect", "id": client.id});
+	broadcast({"type":"leave", "id": client.id});
 }
 
 function move(client, message){
@@ -39,7 +39,7 @@ function move(client, message){
 }
 
 function chat(client, message){
-	broadcast({"type":"move", "id":client.id, "message":message.message});
+	broadcast({"type":"chat", "id":client.id, "message":message.message});
 }
 
 module.exports.init = function(API){

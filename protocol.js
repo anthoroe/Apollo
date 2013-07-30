@@ -17,6 +17,7 @@ function parsePacket(packet){
 		return JSON.parse(packet);
 	} catch(e){
 		console.log("Encountered error parsing packet");
+		console.log(packet.toString());
 		console.log(e);
 		return {"type":"error", "message":e};
 	}	
