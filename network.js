@@ -1,6 +1,7 @@
 var net = require('net');
 var WebSocketServer = require('websocket').server;
 var http = require('http');
+var protocol = require('./protocol');
 
 function Connection(medium, conn){
 	this.conn = conn;
@@ -11,9 +12,9 @@ function Connection(medium, conn){
 
 Connection.prototype.send = function(msg){
 	if(this.medium == module.exports.TCP)
-		this.conn.write(msg);
+		this.conn.write(protocol.generatePacket(msg));
 	if(this.medium == module.exports.WS)
-		this.conn.send(msg);
+		this.conn.send(protocol.generatePacket(msg));
 };
 
 module.exports.TCP = 0;
