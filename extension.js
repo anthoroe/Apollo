@@ -38,9 +38,14 @@ function move(client, message){
 	broadcast({"type":"move", "id":client.id, "x":message.x, "y":message.y});
 }
 
+function chat(client, message){
+	broadcast({"type":"move", "id":client.id, "message":message.message});
+}
+
 module.exports.init = function(API){
 	API.addMessageListener("connect", connect);
 	API.addMessageListener("move", move); // add event listeners
+	API.addMessageListener("chat", chat);
 	API.addMessageListener("disconnect", disconnect);
 	
 }; // expose our init method
