@@ -1,5 +1,7 @@
 // avatar chat
 
+var Apollo;
+
 var users = {}; // index by ID
 
 var idCounter = 0;
@@ -17,11 +19,11 @@ function connect(client, message){
 	client.x = Math.random();
 	client.y = Math.random();
 	
-	broadcast({"type":"join", "id": client.id, "x":client.x, "y":client.y});
+	broadcast({"type":"join", "user": Apollo.sync(client, ["id", "x", "y"])});
 	
 	for(var user in users){
 		if(users[user].id != client.id){
-			client.send({"type":"join", "id":users[user].id, "x":users[user].x, "y":users[user].y});
+			client.send({"type":"join", "user": Apollo.sync(users[user], ["id", "x", "y"])});
 		}
 	}
 }
@@ -33,16 +35,18 @@ function disconnect(client, message){
 function move(client, message){
 	client.x = message.x;
 	client.y = message.y;
-	broadcast({"type":"move", "id":client.id, "x":client.x, "y":client.y});
+	broadcast({"type":"move", "user": Apollo.sync(client, ['id', 'x', 'y'])});
 }
 
 function chat(client, message){
 	broadcast({"type":"chat", "id":client.id, "message":message.message});
 }
 
-module.exports.init = function(Apollo){
+module.exports.init = function(ApolloRef){
+	Apollo = ApolloRef; // save the API instance
+	
 	Apollo.addMessageListener("GSDconnect", connect);
 	Apollo.addMessageListener("GSDdisconnect", disconnect);
-	Apollo.addMessageListener("GSDmove", move);
-	Apollo.addMessageListener("GSDchat", chat);
+	Apollo.addMessageListener("move", move);
+	Apollo.addMessageListener("chat", chat);
 };

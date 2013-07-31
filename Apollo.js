@@ -21,6 +21,7 @@ ExtensionAPI.prototype.sync = function(client, properties){
 	var res = {};
 	for(var property in properties)
 		res[properties[property]] = client[properties[property]];
+	return res;
 };
 
 extension.init(new ExtensionAPI()); // initalize the extension
