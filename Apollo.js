@@ -13,6 +13,15 @@ function ExtensionAPI(){
 ExtensionAPI.prototype.addMessageListener = function(message, handler){
 	extensionHandler.addMessageListener(message, handler);
 }
+ExtensionAPI.prototype.broadcast = function(clients, message){
+	for(var cli in clients)
+		clients[cli].send(message);
+};
+ExtensionAPI.prototype.sync = function(client, properties){
+	var res = {};
+	for(var property in properties)
+		res[properties[property]] = client[properties[property]];
+};
 
 extension.init(new ExtensionAPI()); // initalize the extension
 
