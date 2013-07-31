@@ -15,6 +15,7 @@ function handleMessage(client, message, serverOrigin){
 			}
 		}
 		listeners[message.type](client, message); // call the appropiate handlers
+		console.log(client.id);
 	} else {
 		// unhandled event exception
 		console.log("Unhandled "+message.type+" event");

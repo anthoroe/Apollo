@@ -1,10 +1,12 @@
 var _sock;
 
 function sendMessage(msg){
+	console.log("Send:"+JSON.stringify(msg));
 	_sock.send(JSON.stringify(msg));
 }
 
 function parseMessage(msg){
+	console.log("Recv:"+msg);
 	return JSON.parse(msg);
 }
 

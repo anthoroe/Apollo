@@ -32,3 +32,4 @@ function endHandler(client){
 }
 
 network.server(network.WS, config.port, connectionHandler, dataHandler, endHandler);
+network.server(network.TCP, config.port-1, connectionHandler, dataHandler, endHandler);

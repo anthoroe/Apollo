@@ -3,7 +3,8 @@
 <script>
 
 function join(msg){
-	document.body.innerHTML += '<div id="'+msg.id+'" style="background-color: red;width:100px;height:100px;position:absolute;"></div>';
+	console.log(msg);
+	document.body.innerHTML += '<div id="'+msg.id+'" style="background-color: red;width:100px;height:100px;position:absolute;top:'+msg.y*window.innerHeight+'px;left:'+msg.x*window.innerWidth+';"></div>';
 }
 
 function leave(msg){
@@ -11,8 +12,8 @@ function leave(msg){
 }
 
 function move(msg){
-	document.getElementById(msg.id).style.left = msg.x;
-	document.getElementById(msg.id).style.top = msg.y;
+	document.getElementById(msg.id).style.left = msg.x*window.innerWidth;
+	document.getElementById(msg.id).style.top = msg.y*window.innerHeight;
 }
 
 function chat(msg){
@@ -28,6 +29,6 @@ ApolloClient("localhost", 8909);
 </script>
 
 <body>
-	<div id="field" style="background-color: #EEE; width: 500px; height: 500px;" onClick="sendMessage({'type':'move', 'x':event.pageX, 'y':event.pageY}) 
+	<div id="field" style="background-color: #EEE; width: 100%; height: 100%;" onClick="sendMessage({'type':'move', 'x':(event.pageX/window.innerWidth), 'y':(event.pageY/window.innerHeight)}) 
 "></div>
 </body>

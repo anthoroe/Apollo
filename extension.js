@@ -1,41 +1,41 @@
-// a simple example for an avatar chat
+// avatar chat
 
-var users = [];
-var ids = 0;
+var users = {}; // index by ID
 
-function broadcast(message){
-	var i = 0;
-	while(i < users.length){
-		users[i].send(message);
-		++i;
+var idCounter = 0;
+
+function broadcast(msg){
+	for(user in users){
+		users[user].send(msg);
 	}
 }
 
 function connect(client, message){
-	users.push(client);
+	client.id = idCounter++;
+	users[client.id] = client;
 	
-	client.id = ids++;
+	client.x = Math.random();
+	client.y = Math.random();
 	
-	broadcast({"type":"join", "id": client.id});
+	broadcast({"type":"join", "id": client.id, "x":client.x, "y":client.y});
+	
+	for(var user in users){
+		console.log(users[user].id+" = "+client.id)
+		if(users[user].id != client.id){
+			console.log("se")
+			client.send({"type":"join", "id":users[user].id, "x":users[user].x, "y":users[user].y});
+		}
+	}
 }
 
 function disconnect(client, message){
-	// find user in array
-	var i = 0;
-	while(i < users.length){
-		if(users[i].id == client.id)
-			break;
-		++i;
-	}
-	
-	// remove user
-	users.splice(i);
-	
-	broadcast({"type":"leave", "id": client.id});
+	delete users[client.id];
 }
 
 function move(client, message){
-	broadcast({"type":"move", "id":client.id, "x":message.x, "y":message.y});
+	client.x = message.x;
+	client.y = message.y;
+	broadcast({"type":"move", "id":client.id, "x":client.x, "y":client.y});
 }
 
 function chat(client, message){
@@ -44,8 +44,7 @@ function chat(client, message){
 
 module.exports.init = function(API){
 	API.addMessageListener("connect", connect);
-	API.addMessageListener("move", move); // add event listeners
-	API.addMessageListener("chat", chat);
 	API.addMessageListener("disconnect", disconnect);
-	
-}; // expose our init method
+	API.addMessageListener("move", move);
+	API.addMessageListener("chat", chat);
+};
