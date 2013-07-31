@@ -1,12 +1,15 @@
 var _sock;
+var ApolloDebug = false;
 
 function sendMessage(msg){
-	console.log("Send:"+JSON.stringify(msg));
+	if(ApolloDebug)
+		console.log("Sent: "+JSON.stringify(msg));
 	_sock.send(JSON.stringify(msg));
 }
 
 function parseMessage(msg){
-	console.log("Recv:"+msg);
+	if(ApolloDebug)
+		console.log("Received: "+msg);
 	return JSON.parse(msg);
 }
 
