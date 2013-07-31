@@ -1,0 +1,16 @@
+Apollo
+
+Apollo is an extensible client-server solution.
+
+Getting started:
+
+INSTALL:
+
+1) Install node.js
+2) npm install websocket
+3) Configure the config.json file to your liking
+4) node Apollo.js
+
+Extensions:
+
+extension.js contains the root file in your extension. See the sample extensions for more details
