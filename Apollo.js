@@ -18,7 +18,7 @@ extension.init(new ExtensionAPI()); // initalize the extension
 
 function connectionHandler(client){
 	console.log("Client connected");
-	extensionHandler.handleMessage(client, {"type":"connect"}, true); // send an explicit true to override the restricted messages
+	extensionHandler.handleMessage(client, {"type":"GSDconnect"}, true); // send an explicit true to override the restricted messages
 }
 
 function dataHandler(client, data){
@@ -28,7 +28,7 @@ function dataHandler(client, data){
 
 function endHandler(client){
 	console.log("Client disconnected");
-	extensionHandler.handleMessage(client, {"type":"disconnect"}, true); // send an explicit true to override the restricted messages
+	extensionHandler.handleMessage(client, {"type":"GSDdisconnect"}, true); // send an explicit true to override the restricted messages
 }
 
 network.server(network.WS, config.port, connectionHandler, dataHandler, endHandler);

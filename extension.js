@@ -20,9 +20,7 @@ function connect(client, message){
 	broadcast({"type":"join", "id": client.id, "x":client.x, "y":client.y});
 	
 	for(var user in users){
-		console.log(users[user].id+" = "+client.id)
 		if(users[user].id != client.id){
-			console.log("se")
 			client.send({"type":"join", "id":users[user].id, "x":users[user].x, "y":users[user].y});
 		}
 	}
@@ -42,9 +40,9 @@ function chat(client, message){
 	broadcast({"type":"chat", "id":client.id, "message":message.message});
 }
 
-module.exports.init = function(API){
-	API.addMessageListener("connect", connect);
-	API.addMessageListener("disconnect", disconnect);
-	API.addMessageListener("move", move);
-	API.addMessageListener("chat", chat);
+module.exports.init = function(Apollo){
+	Apollo.addMessageListener("GSDconnect", connect);
+	Apollo.addMessageListener("GSDdisconnect", disconnect);
+	Apollo.addMessageListener("GSDmove", move);
+	Apollo.addMessageListener("GSDchat", chat);
 };
